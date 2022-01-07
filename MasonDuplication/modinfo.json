@@ -1,0 +1,13 @@
+{
+  "type": "code",
+  "modid": "ninjanomnom.masonduplication",
+  "name": "Auto-Masonry",
+  "authors": [ "ninjanomnom" ],
+  "description": "Copy and paste completed chisel projects",
+  "website": "",
+  "side": "Universal",
+  "version": "0.1.0",
+  "dependency": {
+    "game": ""
+  }
+ }
