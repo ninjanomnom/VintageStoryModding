@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Common;
+﻿using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using VSSurvivalMod.Systems.ChiselModes;
@@ -17,8 +12,9 @@ namespace MasonDuplication.ChiselModes
             var main = Main.Instance;
 
             chiselEntity.ConvertToVoxels(out var voxels, out var materials);
-            main.VoxelClipboard = voxels;
-            main.MaterialClipboard = materials;
+
+            main.VoxelClipboards[byPlayer.PlayerUID] = voxels;
+            main.MaterialClipboards[byPlayer.PlayerUID] = materials;
 
             return false;
         }

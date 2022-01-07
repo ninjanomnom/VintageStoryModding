@@ -1,9 +1,8 @@
 using HarmonyLib;
-using System;
+using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
 
 namespace MasonDuplication
 {
@@ -13,8 +12,8 @@ namespace MasonDuplication
     public class Main : ModSystem
     {
         public static Main Instance;
-        public bool[,,] VoxelClipboard;
-        public byte[,,] MaterialClipboard;
+        public Dictionary<string, bool[,,]> VoxelClipboards = new Dictionary<string, bool[,,]>();
+        public Dictionary<string, byte[,,]> MaterialClipboards = new Dictionary<string, byte[,,]>();
 
         public override bool ShouldLoad(EnumAppSide side)
         {
