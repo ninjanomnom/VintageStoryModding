@@ -1,13 +1,16 @@
-﻿using Vintagestory.API.Common;
+﻿using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using VSSurvivalMod.Systems.ChiselModes;
 
 namespace MasonDuplication.ChiselModes
 {
-    public class CopyModeData : ChiselModeData
+    public class CopyModeData : ChiselMode
     {
-        public override bool Act(BlockEntityChisel chiselEntity, IPlayer byPlayer, Vec3i voxelPos, BlockFacing facing, bool isBreak, byte currentMaterialIndex)
+        public override DrawSkillIconDelegate DrawAction(ICoreClientAPI capi) => capi.Gui.Icons.Drawduplicate_svg;
+
+        public override bool Apply(BlockEntityChisel chiselEntity, IPlayer byPlayer, Vec3i voxelPos, BlockFacing facing, bool isBreak, byte currentMaterialIndex)
         {
             var main = Main.Instance;
 

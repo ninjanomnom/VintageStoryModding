@@ -25,74 +25,39 @@ namespace MasonDuplication
         [HarmonyPatch(nameof(ItemChisel.OnLoaded))]
         public static void OnLoadedPostfix(ItemChisel __instance, ICoreAPI api)
         {
-            var chiselModes = ChiselPatchHelpers.GetChiselModes(__instance);
+            var toolModes = __instance.ToolModes;
 
-            if(chiselModes.Any(m => m is CopyModeData))
+            if(toolModes.Any(m => m.Data is CopyModeData))
             {
                 return;
             }
 
-            ChiselPatchHelpers.SetChiselModes(__instance, chiselModes.Append(new ChiselModeData[] {
-                new CopyModeData(),
-                new PasteModeData()
-            }));
-
-            if(api is ICoreClientAPI capi)
+            var newToolModes = new SkillItem[]
             {
-                var toolModes = ChiselPatchHelpers.GetToolModes(__instance);
-                ChiselPatchHelpers.SetToolModes(__instance, toolModes.Append(new SkillItem[]
+                new SkillItem()
                 {
-                    new SkillItem()
-                    {
-                        Code = new AssetLocation("copy"),
-                        Name = Lang.Get("copy"),
-                        Data = new CopyModeData()
-                    }.WithIcon(capi, capi.Gui.Icons.Drawduplicate_svg),
+                    Code = new AssetLocation("copy"),
+                    Name = Lang.Get("copy"),
+                    Data = new CopyModeData()
+                },
 
-                    new SkillItem()
-                    {
-                        Code = new AssetLocation("paste"),
-                        Name = Lang.Get("paste"),
-                        Data = new PasteModeData()
-                    }.WithIcon(capi, capi.Gui.Icons.Drawimport_svg)
-                }));
+                new SkillItem()
+                {
+                    Code = new AssetLocation("paste"),
+                    Name = Lang.Get("paste"),
+                    Data = new PasteModeData()
+                }
+            };
+
+            if (api is ICoreClientAPI capi)
+            {
+                newToolModes = newToolModes.Select(t => {
+                    var chiselMode = (ChiselMode)t.Data;
+                    return t.WithIcon(capi, chiselMode.DrawAction(capi));
+                }).ToArray();
             }
-        }
-    }
 
-    internal static class ChiselPatchHelpers
-    {
-        private static PropertyInfo ChiselModesProperty => GetChiselModesInfo();
-        private static FieldInfo ToolModesField => GetToolModesInfo();
-
-        internal static PropertyInfo GetChiselModesInfo()
-        {
-            return typeof(ItemChisel).GetProperty(nameof(ItemChisel.ChiselModes));
-        }
-
-        internal static FieldInfo GetToolModesInfo()
-        {
-            return typeof(ItemChisel).GetField("toolModes", BindingFlags.Instance | BindingFlags.NonPublic);
-        }
-
-        internal static ChiselModeData[] GetChiselModes(ItemChisel src)
-        {
-            return (ChiselModeData[])ChiselModesProperty.GetValue(src);
-        }
-
-        internal static void SetChiselModes(ItemChisel src, ChiselModeData[] modes)
-        {
-            ChiselModesProperty.SetValue(src, modes);
-        }
-
-        internal static SkillItem[] GetToolModes(ItemChisel src)
-        {
-            return (SkillItem[])ToolModesField.GetValue(src);
-        }
-
-        internal static void SetToolModes(ItemChisel src, SkillItem[] toolModes)
-        {
-            ToolModesField.SetValue(src, toolModes);
+            __instance.ToolModes = toolModes.Append(newToolModes);
         }
     }
 }
